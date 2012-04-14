@@ -1,0 +1,119 @@
+% Robert Adams CS 475
+
+\documentclass[letterpaper,10pt]{article} %twocolumn titlepage 
+\usepackage{graphicx}
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsthm}
+
+\usepackage{alltt}
+\usepackage{float}
+\usepackage{color}
+\usepackage{url}
+
+\usepackage{balance}
+\usepackage[TABBOTCAP, tight]{subfigure}
+\usepackage{enumitem}
+\usepackage{pstricks, pst-node}
+
+
+\usepackage{geometry}
+\geometry{margin=1in, textheight=8.5in} %textwidth=6in
+
+%random comment
+
+\newcommand{\cred}[1]{{\color{red}#1}}
+\newcommand{\cblue}[1]{{\color{blue}#1}}
+
+\usepackage{hyperref}
+
+\def\name{Robert M Adams}
+
+%% The following metadata will show up in the PDF properties
+\hypersetup{
+    colorlinks = true,
+    urlcolor = black,
+    pdfauthor = {\name},
+    pdfkeywords = {cs745},
+    pdftitle = {CS 475 Project 2: SIMD Parallelization},
+    pdfsubject = {CS 475 Project 2},
+    pdfpagemode = UseNone,
+}
+
+
+\begin{document}
+\title{CS 475 Project 2: SIMD Parallelization } 
+\author{Robert Adams}
+\maketitle
+
+
+The purpose of this experiment is to test and analyze the speed
+gains from using Streaming SIMD Extensions (SSE) and identify
+the technologies practical use.
+
+
+To test SIMD multiplications I created two arrays of size 1000 to 8192000, 
+filled them with random floating point numbers, then multiplied each element
+in them to create a third array. e.g.
+c[1] = a[1] * b[1], c[2] = a[2] * b[2], …, c[n] = a[n] * b[n].
+I performed this test 10 times for each array size and averaged the result.
+
+
+\section{Results}
+
+
+
+Since SSE is able to perform four calculations per operation I would have assumed the speedup would be close to 4x, results however, showed an 
+average speedup of about 2.5x when using the difference of the times. 
+The difference between MFLOPS is much greater, however. I’m not sure why this is.
+
+
+The large drop in performance at 512000 elements may be due to a memory cap 
+imposed on the server I was running the tests on. The server may begin 
+to swap values into virtual memory at that point. 
+
+
+This experiment would not run on on my Macbook. I’m not sure why this is.
+
+
+\subsection{System Specifications}
+
+Rackspace Cloud Server. \$ lscpu:
+
+Architecture:          x86\_64,
+CPU op-mode(s):        64-bit,
+CPU(s):                4,
+Thread(s) per core:    1,
+Core(s) per socket:    1,
+CPU socket(s):         4,
+NUMA node(s):          1,
+Vendor ID:             AuthenticAMD,
+CPU family:            16,
+Model:                 4,
+Stepping:              2,
+CPU MHz:               2110479.488,
+Hypervisor vendor:     Xen,
+Virtualization type:   para,
+L1d cache:             64K,
+L1i cache:             64K,
+L2 cache:              512K,
+L3 cache:              6144K,
+
+
+\begin{figure} [ht]
+    \centering
+    \input{plot.tex}
+    \caption{Speed of SIMD Multiplications on an array of random floats.}
+    \label{runtimes}
+\end{figure}
+
+\begin{figure} [ht]
+    \centering
+    \input{difference.tex}
+    \caption{A run with with percent speedup calculated. simd time/non-simd time.}
+    \label{runtimes}
+\end{figure}
+
+
+
+\end{document}
