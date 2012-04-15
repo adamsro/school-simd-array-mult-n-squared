@@ -9,18 +9,30 @@
 #define NUM 32 
 #endif
 
-#define GNUPLOT 0
+#define GNUPLOT 1
 
 #define PRINT_SIMD 1
-#define PRINT_NOSIMD 0
-#define PRINT_DIFFERENCE 0
+#define PRINT_NOSIMD 1
+#define PRINT_DIFFERENCE 1
 
 
 float Ranf(float, float);
 int Ranf(int, int);
 
-// shift aray right one space using the last element as the first
+// shift aray right one space and use the last element as the first
+// FAIL! this will evenutally cause a segfault.
 #define shift_arr(a, l, t) t=a[l-1];a-=1;a[0]=t;
+
+
+// shift aray right one space and use the last element as the first
+void shift_array_right(float *arr, int length) {
+    float temp[length];
+    temp[0] = arr[length - 1];
+    for(int i = 1; i < length - 1; ++i) {
+        temp[i] = arr[i - 1];
+    }
+    arr = temp;
+}
 
 // for testing
 void print_array(float *arr, int length) {
@@ -53,20 +65,25 @@ int main(int argc, char *argv[ ]) {
         B[i] = Ranf(-10.f, 10.f);
     }
 
+    print_array(A, NUM);
+    shift_array_right(A, NUM);
+    print_array(A, NUM);
     /****************************
      * SIMD test block
      * **************************/
+    /*
     double time0 = Timer();
     for (int t = 0; t < NUM_TRIALS; t++) {
         for(int j = 0; j < NUM; j++) {
             C[j] = SimdMulAndSum(A, B, NUM);
-            shift_arr(B, NUM, temp);
-            //print_array(B, NUM); // testing
-            //print_array(C, NUM);
+            //shift_arr(B, NUM, temp);
+            print_array(A, NUM); // testing
+            print_array(B, NUM); 
+            print_array(C, NUM);
+            std::cout << std::endl;
         }
     }
     double time1 = Timer();
-
     double dts = (time1 - time0) / (float) NUM_TRIALS;
     if (PRINT_SIMD == 1) {
         if(GNUPLOT == 0) {
@@ -78,6 +95,7 @@ int main(int argc, char *argv[ ]) {
         }
     }
 
+    */
     /****************************
      * non SIMD test block
      * **************************/
@@ -101,10 +119,11 @@ int main(int argc, char *argv[ ]) {
             printf("%d %8.3f\n", NUM, ((float) NUM / dtn) / 1000000.f);
         }
     }
-
+/*
     if(PRINT_DIFFERENCE == 1) {
         printf("%d %g\n", NUM, ((float) NUM / dtn) / (dtn/dts));
     }
+*/
     return 0;
 }
 
