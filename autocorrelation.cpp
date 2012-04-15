@@ -27,11 +27,13 @@ int Ranf(int, int);
 // shift aray right one space and use the last element as the first
 void shift_array_right(float *arr, int length) {
     float temp[length];
-    temp[0] = arr[length - 1];
-    for(int i = 1; i < length - 1; ++i) {
-        temp[i] = arr[i - 1];
+    for(int i = 0; i < length; ++i) {
+        temp[i] = arr[i];
     }
-    arr = temp;
+    arr[0] = temp[length - 1];
+    for(int i = 1; i < length; ++i) {
+        arr[i] = temp[i - 1];
+    }
 }
 
 // for testing
@@ -65,13 +67,12 @@ int main(int argc, char *argv[ ]) {
         B[i] = Ranf(-10.f, 10.f);
     }
 
-    print_array(A, NUM);
-    shift_array_right(A, NUM);
-    print_array(A, NUM);
+    //print_array(A, NUM);
+    //shift_array_right(A, NUM);
+    //print_array(A, NUM);
     /****************************
      * SIMD test block
      * **************************/
-    /*
     double time0 = Timer();
     for (int t = 0; t < NUM_TRIALS; t++) {
         for(int j = 0; j < NUM; j++) {
@@ -95,7 +96,6 @@ int main(int argc, char *argv[ ]) {
         }
     }
 
-    */
     /****************************
      * non SIMD test block
      * **************************/
@@ -119,11 +119,9 @@ int main(int argc, char *argv[ ]) {
             printf("%d %8.3f\n", NUM, ((float) NUM / dtn) / 1000000.f);
         }
     }
-/*
     if(PRINT_DIFFERENCE == 1) {
         printf("%d %g\n", NUM, ((float) NUM / dtn) / (dtn/dts));
     }
-*/
     return 0;
 }
 
