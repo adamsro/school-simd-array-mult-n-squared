@@ -21,49 +21,16 @@ float C[NUM];
 
 float Ranf(float, float);
 int Ranf(int, int);
+void shift_array_right(float *arr, int length);
+void print_array(float *arr, int length);
 
 // shift aray right one space and use the last element as the first
 // FAIL! this will evenutally cause a segfault.
 #define shift_arr(a, l, t) t=a[l-1];a-=1;a[0]=t;
 
 
-// shift aray right one space and use the last element as the first
-void shift_array_right(float *arr, int length) {
-    float temp[length];
-    for(int i = 0; i < length; ++i) {
-        temp[i] = arr[i];
-    }
-    arr[0] = temp[length - 1];
-    for(int i = 1; i < length; ++i) {
-        arr[i] = temp[i - 1];
-    }
-}
-
-// for testing
-void print_array(float *arr, int length) {
-    for(int i = 0; i < length; ++i) {
-        printf("%f ", arr[i]);
-    }
-    printf("\n");
-}
-
 int main(int argc, char *argv[ ]) {
 
-    /*
-    float temp;
-    float *A = (float*) malloc(NUM* sizeof (float));
-    if (A == NULL) {
-        perror("malloc failed");
-    }
-    float *B = (float*) malloc(NUM* sizeof (float));
-    if (B == NULL) {
-        perror("malloc failed");
-    }
-    float *C = (float*) malloc(NUM* sizeof (float));
-    if (C == NULL) {
-        perror("malloc failed");
-    }
-    */
     double prec = omp_get_wtick();
     //fprintf( stderr, "Clock precision = %g\n", prec );
 
@@ -72,6 +39,7 @@ int main(int argc, char *argv[ ]) {
         B[i] = Ranf(-10.f, 10.f);
     }
 
+    // for testing:
     //print_array(A, NUM);
     //shift_array_right(A, NUM);
     //print_array(A, NUM);
@@ -139,3 +107,24 @@ int Ranf(int ilow, int ihigh) {
     float high = (float) ihigh + 0.9999f;
     return (int) (Ranf(low, high));
 }
+
+// shift aray right one space and use the last element as the first
+void shift_array_right(float *arr, int length) {
+    float temp[length];
+    for(int i = 0; i < length; ++i) {
+        temp[i] = arr[i];
+    }
+    arr[0] = temp[length - 1];
+    for(int i = 1; i < length; ++i) {
+        arr[i] = temp[i - 1];
+    }
+}
+
+// for testing
+void print_array(float *arr, int length) {
+    for(int i = 0; i < length; ++i) {
+        printf("%f ", arr[i]);
+    }
+    printf("\n");
+}
+
