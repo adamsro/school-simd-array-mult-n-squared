@@ -15,6 +15,9 @@
 #define PRINT_NOSIMD 1
 #define PRINT_DIFFERENCE 1
 
+float A[NUM];
+float B[NUM];
+float C[NUM];
 
 float Ranf(float, float);
 int Ranf(int, int);
@@ -46,6 +49,7 @@ void print_array(float *arr, int length) {
 
 int main(int argc, char *argv[ ]) {
 
+    /*
     float temp;
     float *A = (float*) malloc(NUM* sizeof (float));
     if (A == NULL) {
@@ -59,6 +63,7 @@ int main(int argc, char *argv[ ]) {
     if (C == NULL) {
         perror("malloc failed");
     }
+    */
     double prec = omp_get_wtick();
     //fprintf( stderr, "Clock precision = %g\n", prec );
 
@@ -77,22 +82,19 @@ int main(int argc, char *argv[ ]) {
     for (int t = 0; t < NUM_TRIALS; t++) {
         for(int j = 0; j < NUM; j++) {
             C[j] = SimdMulAndSum(A, B, NUM);
-            //shift_arr(B, NUM, temp);
-            print_array(A, NUM); // testing
-            print_array(B, NUM); 
-            print_array(C, NUM);
-            std::cout << std::endl;
+            shift_array_right(B, NUM);
         }
     }
     double time1 = Timer();
     double dts = (time1 - time0) / (float) NUM_TRIALS;
+    float mflopst = ((float) (NUM*NUM) / dts) / 1000000.f;
     if (PRINT_SIMD == 1) {
         if(GNUPLOT == 0) {
             printf("Average SIMD Elapsed time = %g\n", dts);
-            printf("SIMD speed = %8.3f MFLOPS\n", ((float) NUM / dts) / 1000000.f);
+            printf("SIMD speed = %8.3f MFLOPS\n", mflopst); 
         } else {
             // x-axis: #-of-elements y-axis: MFLOPS, do not need elapsed time
-            printf("%d %8.3f\n", NUM, ((float) NUM / dts) / 1000000.f);
+            printf("%d %8.3f\n", NUM, mflopst); 
         }
     }
 
@@ -103,24 +105,26 @@ int main(int argc, char *argv[ ]) {
     for (int t = 0; t < NUM_TRIALS; t++) {
         for(int j = 0; j < NUM; j++) {
             C[j] = NonSimdMulAndSum(A, B, NUM);
-            shift_arr(B, NUM, temp);
+            shift_array_right(B, NUM);
         }
     }
     double time3 = Timer();
 
     double dtn = (time3 - time2) / (float) NUM_TRIALS;
+    float mflopsn = ((float) (NUM*NUM) / dtn) / 1000000.f;
     if(PRINT_NOSIMD == 1) { 
         if(GNUPLOT == 0) {
             printf("Average Non-SIMD Elapsed time = %g\n", dtn);
-            printf("Non-SIMD speed = %8.3f MFLOPS\n", ((float) NUM / dtn) / 1000000.f);
+            printf("Non-SIMD speed = %8.3f MFLOPS\n", mflopsn); 
             //printf("Speed-up = %g\n", dtn / dts);
         } else {
             // x-axis: #-of-elements y-axis: MFLOPS, do not need elapsed time
-            printf("%d %8.3f\n", NUM, ((float) NUM / dtn) / 1000000.f);
+            printf("%d %8.3f\n", NUM, mflopsn); 
         }
     }
     if(PRINT_DIFFERENCE == 1) {
-        printf("%d %g\n", NUM, ((float) NUM / dtn) / (dtn/dts));
+        //printf("%d %g\n", NUM, ((float) NUM / dtn) / (dtn/dts));
+        printf("%d %g\n", NUM, (mflopsn/mflopst)); 
     }
     return 0;
 }

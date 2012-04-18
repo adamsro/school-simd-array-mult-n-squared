@@ -4,7 +4,7 @@ simd.o:		simd.h simd.cpp
 		g++  -c  simd.cpp -o simd.o
 
 autocorrelation.o:	autocorrelation.cpp simd.o
-		g++  -g -DNUM=8 -o autocorrelation  autocorrelation.cpp simd.o  -lm  -fopenmp
+		g++  -g -DNUM=1024 -o autocorrelation  autocorrelation.cpp simd.o  -lm  -fopenmp
 
 clean:
 	rm -rf *o 
