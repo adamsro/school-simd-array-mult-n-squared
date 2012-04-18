@@ -11,9 +11,9 @@
 
 #define GNUPLOT 1
 
-#define PRINT_SIMD 1
+#define PRINT_SIMD 0
 #define PRINT_NOSIMD 0
-#define PRINT_DIFFERENCE 0
+#define PRINT_DIFFERENCE 1
 
 float A[NUM];
 float B[NUM];
